@@ -1,0 +1,90 @@
+Projecto de Sistemas Distribuídos
+
+Primeira entrega - 2014-04-11 - 20h
+
+Grupo de SD 31
+
+Repositório A_04_17_31
+
+Rodrigo Monteiro, 73701, rodrigo.ant.monteiro@gmail.com
+Fábio Antunes, 66979, fabio.antunes@tecnico.ulisboa.pt
+Miguel Deus, 72879, miguel_deus10@hotmail.com
+
+-------------------------------------------------------------------------------
+
+Serviço RegistoFatura
+
+Instruções de instalação para Windows
+
+[1] Iniciar servidores
+
+MySQL:
+login no localhost, username "root", password "rootroot"
+> ant db-clean
+> ant db-build
+> ant db-populate
+
+JUDDI:
+> startup.bat
+
+
+[2] Criar directoria de trabalho
+
+cd temp
+mkdir SD
+cd SD
+
+
+[3] Obter versão entregue
+
+Servidor:
+svn co svn+ssh://ist173701@sigma.ist.utl.pt/afs/ist.utl.pt/groups/leic-es/svn/A_04_17_31/registofatura-ws/tags/R_1
+
+Cliente:
+svn co svn+ssh://ist173701@sigma.ist.utl.pt/afs/ist.utl.pt/groups/leic-es/svn/A_04_17_31/registofatura-ws-cli/tags/R_1
+
+
+[4] Preparar dados de teste
+
+
+
+[5] Construir e executar servidor
+
+cd registofatura-ws
+ant clean run
+
+
+[6] Construir cliente
+
+cd registofatura-ws-cli
+ant clean build
+
+
+-------------------------------------------------------------------------------
+
+Instruções de teste:
+(Como verificar que todas as funcionalidades estão a funcionar correctamente)
+
+
+[1] Executar cliente de teste básico
+
+ant run
+> test
+
+(corre um teste automático com uma operação de cada - comunicarFatura, listarFaturas, pedirSerie e consultarIVADevido)
+
+ou
+
+ant run
+> test2
+
+(corre um teste automático com uma operação comunicarFatura para um cliente não existente)
+
+[2] Executar cliente de teste para testes mais exaustivos
+
+ant run
+
+(inserir dados à mão, seleccionando as operações comunicarFatura, listarFaturas, pedirSerie e consultarIVADevido através das suas
+iniciais, respectivamente "cf", "lf", "ps" e "cid", seguido dos respectivos dados de input pedidos pelo programa através da consola)
+
+-------------------------------------------------------------------------------

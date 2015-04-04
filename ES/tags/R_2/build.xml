@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="rest" default="compile" basedir=".">
+	<description>Rest Domain Generator and Tests Build File</description>
+
+	<property name="javac.encoding" value="UTF-8" />
+	<property name="java.file.encoding" value="UTF-8" />
+
+	<property name="src.rel-dir" value="src" />
+	<property name="build.rel-dir" value="build" />
+	<property name="lib.rel-dir" value="../lib" />
+
+	<property name="main.src.rel-dir" value="${src.rel-dir}/main" />
+	<property name="test.src.rel-dir" value="${src.rel-dir}/test" />
+
+	<property name="dml.filename" value="domain.dml" />
+
+	<property name="java.main.src.rel-dir" value="${main.src.rel-dir}/java" />
+	<property name="java.test.src.rel-dir" value="${test.src.rel-dir}/java" />
+	<property name="dml.src.rel-dir" value="${main.src.rel-dir}/dml" />
+	<property name="generated-src.build.rel-dir" value="${build.rel-dir}/src" />
+	<property name="classes.build.rel-dir" value="${build.rel-dir}/classes" />
+
+	<property name="dml.rel-file" value="${dml.src.rel-dir}/${dml.filename}" />
+
+	<!-- mySQL -->
+
+	<property name="sql.driver" value="com.mysql.jdbc.Driver" />
+	<property name="sql.db" value="rest" />
+	<property name="sql.url" value="jdbc:mysql://localhost:3306" />
+	<property name="sql.user" value="root" />
+	<property name="sql.pass" value="rootroot" />
+
+	<!-- <property name="sql.user" value="rest" />
+	<property name="sql.pass" value="r3st" />-->
+
+	<!--
+	<property name="sql.db" value="ist166979" />
+	<property name="sql.url" value="jdbc:mysql://db.ist.utl.pt:3306/" />
+	<property name="sql.user" value="ist166979" />
+	<property name="sql.pass" value="DEFINIR" />
+	-->
+
+	<path id="project.classpath">
+		<pathelement location="${classes.build.rel-dir}" />
+		<fileset dir="${lib.rel-dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<taskdef resource="dml-ant.xml" classpathref="project.classpath" />
+
+	<target name="prepare">
+		<echo message="Preparing the project for build..." />
+		<mkdir dir="${classes.build.rel-dir}" />
+	</target>
+
+	<target name="generate-domain" depends="prepare">
+		<echo message="Generating base domain classes..." />
+		<echo message="Using: ${dml.rel-file}" />
+		<dml-domain-generator destDirectory="${java.main.src.rel-dir}" destDirectoryBase="${generated-src.build.rel-dir}">
+			<fileset file="${dml.rel-file}" />
+		</dml-domain-generator>
+	</target>
+
+	<target name="compile" depends="instrument-classes" description="Compiles the project" />
+
+	<target name="compile-domain" depends="generate-domain, prepare">
+		<echo message="Compiling sources..." />
+		<javac destdir="${classes.build.rel-dir}" debug="true" debuglevel="lines,vars,source" optimize="true" deprecation="true" verbose="false" includeantruntime="false">
+			<classpath refid="project.classpath" />
+			<src>
+				<pathelement path="${generated-src.build.rel-dir}:${java.main.src.rel-dir}" />
+			</src>
+			<compilerarg line="" />
+		</javac>
+	</target>
+
+
+	<target name="instrument-classes" depends="compile-domain, compile-tests">
+		<echo message="Injecting FenixFramework Voodoo Magic..." />
+		<dml-post-processor dir="${classes.build.rel-dir}">
+			<fileset file="${dml.rel-file}" />
+			<classpath refid="project.classpath" />
+		</dml-post-processor>
+	</target>
+
+	<target name="run" depends="compile, instrument-classes" description="Runs the program">
+		<java classname="pt.ist.rest.presentationserver.PresentationServer" fork="false">
+			<classpath>
+				<path refid="project.classpath" />
+			</classpath>
+		</java>
+	</target>
+
+	<target name="populate" depends="compile, instrument-classes, clean-db" description="Populates the initial data">
+		<java classname="pt.ist.rest.RestSetup" fork="false">
+			<classpath>
+				<path refid="project.classpath" />
+			</classpath>
+		</java>
+	</target>
+
+	<target name="clean" description="Cleans the compiled classes and generated sources">
+		<delete dir="${build.rel-dir}" />
+	</target>
+
+	<target name="compile-tests" depends="compile-domain"
+		description="Compile the tests">
+		<javac destdir="${classes.build.rel-dir}" debug="true" verbose="false"
+			debuglevel="lines,vars,source" optimize="true" deprecation="true"
+			includeantruntime="false" encoding="${javac.encoding}">
+			<classpath refid="project.classpath" />
+			<src>
+				<pathelement path="${java.test.src.rel-dir}" />
+			</src>
+		</javac>
+	</target>
+
+	 <target name="test" depends="compile" description="Run the tests">
+    <junit fork="yes" forkmode="once">
+      <classpath refid="project.classpath" />
+      <formatter type="brief" usefile="false" />
+			<test name="pt.ist.rest.test.AdicionarItemAoTabuleiroTest" />
+			<test name="pt.ist.rest.test.EsvaziarTabuleiroTest" />
+			<test name="pt.ist.rest.test.ProcuraPratoTest" />
+		</junit>
+	</target>
+
+	<target name="clean-db" description="Recreated project's database">
+		<echo message="Creating SQL database '${sql.db}'" />
+		<sql driver="${sql.driver}" url="${sql.url}" userid="${sql.user}" password="${sql.pass}">
+			<classpath refid="project.classpath" />
+     		DROP DATABASE IF EXISTS ${sql.db};
+  		</sql>
+		<sql driver="${sql.driver}" url="${sql.url}" userid="${sql.user}" password="${sql.pass}">
+			<classpath refid="project.classpath" />
+     		CREATE DATABASE IF NOT EXISTS ${sql.db};
+  		</sql>
+	</target>
+</project>

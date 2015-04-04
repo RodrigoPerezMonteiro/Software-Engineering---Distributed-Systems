@@ -1,0 +1,187 @@
+package pt.ist.rest.domain;
+
+class PortalRestaurante {
+	Integer _maxVotosPorCliente;
+	Integer _minPratosParaClassificarRest;
+	Integer _minClassificacaoPratos;
+	Integer _maxPratosPorRestaurante;
+	Integer _idPrato;
+}
+
+class Restaurante {
+
+	String _nome;
+	String _morada;
+	Double _classificacao;
+	
+}
+
+class Utilizador {
+	
+	String _nome;
+	String _username;
+	String _password;
+	Integer _tipo;
+	
+}
+
+class GestorRestaurante extends Utilizador {
+
+}
+
+class Cliente extends Utilizador {
+
+	String 	_morada;
+	String 	_email;
+	Integer  _nif;	
+	Integer _idCompra;
+}
+
+class Compra {
+
+	Boolean _registada;
+	Integer _id;
+	Double _total;
+	
+}
+
+class Prato {
+
+	String  _nome;
+	Double  _preco; 
+	Double  _calorias;
+	Integer  _classificacao;
+	Integer _id;
+	
+}
+
+
+class Alimento {
+
+	String _descricao;
+}
+
+class Carne extends Alimento {
+
+}
+
+class Peixe extends Alimento {
+
+}
+
+class Vegetal extends Alimento {
+
+}
+class ChequeRefeicao {
+
+	Integer _codigo;
+	Double _valor;
+	
+}
+
+relation PortalRestauranteContemRestaurante {
+
+	PortalRestaurante playsRole portalRestaurante;
+	Restaurante playsRole restaurante {
+		multiplicity *;
+	}
+	
+}
+
+relation PortalRestauranteValidaChequeRefeicao {
+	PortalRestaurante playsRole portalRestaurante;
+	ChequeRefeicao playsRole chequeRefeicao {
+		multiplicity *;
+	}
+	
+}
+
+relation PortalRestauranteFacturaCompra {
+	
+	PortalRestaurante playsRole portalRestaurante;
+	Compra playsRole compra {
+		multiplicity *;
+	}
+	
+}
+
+relation PortalRestauranteRegistaUtilizadores {
+
+	PortalRestaurante playsRole portalRestaurante;
+	Utilizador playsRole utilizador {
+		multiplicity *;
+	}
+	
+}
+
+relation RestauranteContemPrato {
+	
+	Restaurante playsRole restaurante;
+	Prato playsRole prato {
+		multiplicity *;
+	}
+	
+}
+
+relation GestorRestauranteGereRestaurante {
+	
+	Restaurante playsRole restaurante;
+	GestorRestaurante playsRole gestorRestaurante {
+		multiplicity *;
+	}
+	
+}
+
+relation ClienteFazCompra {
+	
+	Cliente playsRole cliente;
+	Compra playsRole compra {
+		multiplicity *;
+	}
+	
+}
+
+relation CompraContemPrato {
+	
+	Compra playsRole compra;
+	Prato playsRole prato {
+		multiplicity *;
+	}
+	
+}
+
+relation ClienteVotaPrato {
+
+	Cliente playsRole cliente;
+	Prato playsRole prato {
+		multiplicity 0..*;
+	}
+	
+}
+
+relation PratoTemAlimento {
+	
+	Prato playsRole prato;
+	Alimento playsRole alimento {
+		multiplicity *;
+	}
+	
+}
+
+relation CompraUsaChequeRefeicao {
+	
+	Compra playsRole compra;
+	ChequeRefeicao playsRole chequeRefeicao {
+		multiplicity *;
+	}
+	
+}
+
+relation ClienteUsaChequeRefeicao {
+	
+	Cliente playsRole cliente;
+	ChequeRefeicao playsRole chequeRefeicao {
+		multiplicity *;
+	}
+	
+}

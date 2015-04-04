@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Contrato WSDL do serviço ChequeRefeicao Este WSDL define as operações 
+	disponibilizadas pelo Web Service, e não pode ser modificado. Para mais informação, 
+	consultar secções wsdl:service, wsdl:portType, wsdl:types e wsdl:binding 
+	Versão 1.0 Histórico: 1.0 - 2014-03-14 - versão inicial -->
+<wsdl:definitions name="ChequeRefeicaoService"
+	targetNamespace="urn:pt:chequerefeicao:ws" xmlns:tns="urn:pt:chequerefeicao:ws"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soaphttp="http://schemas.xmlsoap.org/soap/http"
+	xmlns:wsamd="http://www.w3.org/2007/05/addressing/metadata">
+
+	<wsdl:types>
+		<!-- Definições dos tipos de dados -->
+		<xs:schema attributeFormDefault="unqualified"
+			elementFormDefault="unqualified" targetNamespace="urn:pt:chequerefeicao:ws">
+
+			<!-- O pedido da operação 'emitir' recebe: - o identificador do titular 
+				- o valor do cheque - indicação se o cheque é endossável ou não O identificador 
+				do cliente é textual, sem espaços, com caracteres alfabéticos e numéricos. 
+				O valor deve ser um inteiro maior do que zero. O tipo de dados mais adequado 
+				seria xs:decimal para lidar com números de precisão arbitrária, para evitar 
+				acumulação de erros de arredondamento. No entanto, optou-se por usar xs:int. -->
+			<xs:element name="emitir" type="tns:emitir" />
+			<xs:complexType name="emitir">
+				<xs:sequence>
+					<xs:element name="titular" type="xs:string" minOccurs="0" />
+					<xs:element name="valor" type="xs:int" />
+					<xs:element name="endossavel" type="xs:boolean" />
+				</xs:sequence>
+			</xs:complexType>
+			<!-- A resposta normal da operação 'emitir' devolve o número do cheque 
+				de refeição emitido. -->
+			<xs:element name="emitirResponse" type="tns:emitirResponse" />
+			<xs:complexType name="emitirResponse">
+				<xs:sequence>
+					<xs:element name="resultado" type="xs:string" minOccurs="0" />
+				</xs:sequence>
+			</xs:complexType>
+
+			<!-- O pedido da operação 'sacar' recebe: - o identificador do beneficiário 
+				do cheque (quem vai receber o valor) - uma lista com números de cheques a 
+				sacar (usar) -->
+			<xs:element name="sacar" type="tns:sacar" />
+			<xs:complexType name="sacar">
+				<xs:sequence>
+					<xs:element name="beneficiario" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="numeros" type="xs:string" minOccurs="0"
+						maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:complexType>
+			<!-- A resposta normal da operação 'sacar' devolve o valor total dos cheques 
+				usados. -->
+			<xs:element name="sacarResponse" type="tns:sacarResponse" />
+			<xs:complexType name="sacarResponse">
+				<xs:sequence>
+					<xs:element name="valorTotal" type="xs:int" minOccurs="0" />
+				</xs:sequence>
+			</xs:complexType>
+
+			<!-- O pedido da operação 'listar' recebe: - o identificador do titular 
+				dos cheques - uma indicação se pretende listar os cheques usados (sacados) 
+				ou não usados -->
+			<xs:element name="listar" type="tns:listar" />
+			<xs:complexType name="listar">
+				<xs:sequence>
+					<xs:element name="titular" type="xs:string" minOccurs="0" />
+					<xs:element name="sacados" type="xs:boolean" />
+				</xs:sequence>
+			</xs:complexType>
+			<!-- A resposta normal da operação 'listar' devolve uma lista de identificadores 
+				de cheques. -->
+			<xs:element name="listarResponse" type="tns:listarResponse" />
+			<xs:complexType name="listarResponse">
+				<xs:sequence>
+					<xs:element name="resultado" type="xs:string" minOccurs="0"
+						maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:complexType>
+
+			<!-- O pedido da operação 'endossar' recebe: - o identificador do titular 
+				- o identificador do terceiro a quem o cheque vai ser endossado (o terceiro 
+				passará a poder usar o cheque como se fosse seu) - o número do cheque -->
+			<xs:element name="endossar" type="tns:endossar" />
+			<xs:complexType name="endossar">
+				<xs:sequence>
+					<xs:element name="titular" type="xs:string" minOccurs="0" />
+					<xs:element name="terceiro" type="xs:string" minOccurs="0" />
+					<xs:element name="numero" type="xs:string" minOccurs="0" />
+				</xs:sequence>
+			</xs:complexType>
+			<!-- A resposta normal da operação 'endossar' devolve o número do cheque 
+				endossado. -->
+			<xs:element name="endossarResponse" type="tns:endossarResponse" />
+			<xs:complexType name="endossarResponse">
+				<xs:sequence>
+					<xs:element name="resultado" type="xs:string" minOccurs="0" />
+				</xs:sequence>
+			</xs:complexType>
+
+
+			<!-- A resposta de erro 'UtilizadorInexistente' indica que o utilizador 
+				indicado não existe. -->
+			<xs:element name="UtilizadorInexistente" type="tns:UtilizadorInexistente" />
+			<xs:complexType name="UtilizadorInexistente">
+				<xs:sequence>
+					<xs:element name="mensagem" type="xs:string" minOccurs="0" />
+					<xs:element name="utilizador" type="xs:string"
+						minOccurs="0" />
+				</xs:sequence>
+			</xs:complexType>
+
+			<!-- A resposta de erro 'ValorInvalido' indica que o valor indicado para 
+				o cheque não faz sentido. -->
+			<xs:element name="ValorInvalido" type="tns:ValorInvalido" />
+			<xs:complexType name="ValorInvalido">
+				<xs:sequence>
+					<xs:element name="mensagem" type="xs:string" minOccurs="0" />
+					<xs:element name="valor" type="xs:int" />
+				</xs:sequence>
+			</xs:complexType>
+
+			<!-- A resposta de erro 'ChequeInexistente' indica que o cheque fornecido 
+				não existe. -->
+			<xs:element name="ChequeInexistente" type="tns:ChequeInexistente" />
+			<xs:complexType name="ChequeInexistente">
+				<xs:sequence>
+					<xs:element name="mensagem" type="xs:string" minOccurs="0" />
+					<xs:element name="nr" type="xs:string" minOccurs="0" />
+				</xs:sequence>
+			</xs:complexType>
+
+			<!-- A resposta de erro 'ChequeNaoEndossavel' indica que o cheque fornecido 
+				não pode ser endossado. -->
+			<xs:element name="ChequeNaoEndossavel" type="tns:ChequeNaoEndossavel" />
+			<xs:complexType name="ChequeNaoEndossavel">
+				<xs:sequence>
+					<xs:element name="mensagem" type="xs:string" minOccurs="0" />
+					<xs:element name="nr" type="xs:string" minOccurs="0" />
+				</xs:sequence>
+			</xs:complexType>
+
+			<!-- A resposta de erro 'ChequeJaUsado' indica que cheque fornecido já 
+				foi usado anteriormente. -->
+			<xs:element name="ChequeJaUsado" type="tns:ChequeJaUsado" />
+			<xs:complexType name="ChequeJaUsado">
+				<xs:sequence>
+					<xs:element name="mensagem" type="xs:string" minOccurs="0" />
+					<xs:element name="nr" type="xs:string" minOccurs="0" />
+				</xs:sequence>
+			</xs:complexType>
+
+		</xs:schema>
+	</wsdl:types>
+
+	<!-- As mensagens referenciam os elementos definidos no xs:schema -->
+	<wsdl:message name="emitir">
+		<wsdl:part name="parameters" element="tns:emitir" />
+	</wsdl:message>
+	<wsdl:message name="emitirResponse">
+		<wsdl:part name="parameters" element="tns:emitirResponse" />
+	</wsdl:message>
+
+	<wsdl:message name="sacar">
+		<wsdl:part name="parameters" element="tns:sacar" />
+	</wsdl:message>
+	<wsdl:message name="sacarResponse">
+		<wsdl:part name="parameters" element="tns:sacarResponse" />
+	</wsdl:message>
+
+	<wsdl:message name="listar">
+		<wsdl:part name="parameters" element="tns:listar" />
+	</wsdl:message>
+	<wsdl:message name="listarResponse">
+		<wsdl:part name="parameters" element="tns:listarResponse" />
+	</wsdl:message>
+
+	<wsdl:message name="endossar">
+		<wsdl:part name="parameters" element="tns:endossar" />
+	</wsdl:message>
+	<wsdl:message name="endossarResponse">
+		<wsdl:part name="parameters" element="tns:endossarResponse" />
+	</wsdl:message>
+
+	<wsdl:message name="UtilizadorInexistente">
+		<wsdl:part name="fault" element="tns:UtilizadorInexistente" />
+	</wsdl:message>
+	<wsdl:message name="ValorInvalido">
+		<wsdl:part name="fault" element="tns:ValorInvalido" />
+	</wsdl:message>
+	<wsdl:message name="ChequeInexistente">
+		<wsdl:part name="fault" element="tns:ChequeInexistente" />
+	</wsdl:message>
+	<wsdl:message name="ChequeNaoEndossavel">
+		<wsdl:part name="fault" element="tns:ChequeNaoEndossavel" />
+	</wsdl:message>
+	<wsdl:message name="ChequeJaUsado">
+		<wsdl:part name="fault" element="tns:ChequeJaUsado" />
+	</wsdl:message>
+
+
+	<!-- Definição das operações do serviço -->
+	<wsdl:portType name="ChequeRefeicaoPortType">
+		<!-- A operação 'emitir' emite um novo cheque. Se o utilizador titular 
+			não existir, deve ser devolvido o erro UtilizadorInexistente. Se o valor 
+			for menor ou igual a zero, deve ser devolvido o erro ValorInvalido. -->
+		<wsdl:operation name="emitir">
+			<wsdl:input message="tns:emitir" name="emitir" />
+			<wsdl:output message="tns:emitirResponse" name="emitirResponse" />
+			<wsdl:fault message="tns:UtilizadorInexistente" name="UtilizadorInexistente" />
+			<wsdl:fault message="tns:ValorInvalido" name="ValorInvalido" />
+		</wsdl:operation>
+
+		<!-- A operação 'sacar' usa um conjunto de cheques. Se o utilizador beneficiário 
+			não existir, deve ser devolvido o erro UtilizadorInexistente. Se um dos cheques 
+			não existe ou já foi usado, deve ser devolvido o erro respectivo. -->
+		<wsdl:operation name="sacar">
+			<wsdl:input message="tns:sacar" name="sacar" />
+			<wsdl:output message="tns:sacarResponse" name="sacarResponse" />
+			<wsdl:fault message="tns:UtilizadorInexistente" name="UtilizadorInexistente" />
+			<wsdl:fault message="tns:ChequeInexistente" name="ChequeInexistente" />
+			<wsdl:fault message="tns:ChequeJaUsado" name="ChequeJaUsado" />
+		</wsdl:operation>
+
+		<!-- A operação 'endossar' endossa o cheque a um terceiro, permitindo-lhe 
+			usar o cheque em seu proveito. Se o utilizador titular ou terceiro não existir, 
+			deve ser devolvido o erro UtilizadorInexistente. Se o cheque não existe, 
+			não é endossável ou já foi usado, deve ser devolvido o erro respectivo. -->
+		<wsdl:operation name="endossar">
+			<wsdl:input message="tns:endossar" name="endossar" />
+			<wsdl:output message="tns:endossarResponse" name="endossarResponse" />
+			<wsdl:fault message="tns:UtilizadorInexistente" name="UtilizadorInexistente" />
+			<wsdl:fault message="tns:ChequeInexistente" name="ChequeInexistente" />
+			<wsdl:fault message="tns:ChequeNaoEndossavel" name="ChequeNaoEndossavel" />
+			<wsdl:fault message="tns:ChequeJaUsado" name="ChequeJaUsado" />
+		</wsdl:operation>
+
+		<!-- A operação 'listar' apresenta uma lista de cheques do titular. Os 
+			cheques já sacados ou os cheques por sacar. Se o utilizador titular não existir, 
+			deve ser devolvido o erro UtilizadorInexistente. -->
+		<wsdl:operation name="listar">
+			<wsdl:input message="tns:listar" name="listar" />
+			<wsdl:output message="tns:listarResponse" name="listarResponse" />
+			<wsdl:fault message="tns:UtilizadorInexistente" name="UtilizadorInexistente" />
+		</wsdl:operation>
+
+	</wsdl:portType>
+
+	<!-- Vinculação das operações abstractas (descritas em wsdl:portType) e 
+		operações concretas. Neste caso, as operações devem ser invocadas através 
+		de mensagens SOAP transmitidas sobre o protocolo HTTP (que por sua vez usa 
+		TCP/IP) -->
+	<wsdl:binding name="ChequeRefeicaoServiceSoapBinding"
+		type="tns:ChequeRefeicaoPortType">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="emitir">
+			<soap:operation soapAction="" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="UtilizadorInexistente">
+				<soap:fault name="UtilizadorInexistente" use="literal" />
+			</wsdl:fault>
+			<wsdl:fault name="ValorInvalido">
+				<soap:fault name="ValorInvalido" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="sacar">
+			<soap:operation soapAction="" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="UtilizadorInexistente">
+				<soap:fault name="UtilizadorInexistente" use="literal" />
+			</wsdl:fault>
+			<wsdl:fault name="ChequeInexistente">
+				<soap:fault name="ChequeInexistente" use="literal" />
+			</wsdl:fault>
+			<wsdl:fault name="ChequeJaUsado">
+				<soap:fault name="ChequeJaUsado" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="endossar">
+			<soap:operation soapAction="" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="UtilizadorInexistente">
+				<soap:fault name="UtilizadorInexistente" use="literal" />
+			</wsdl:fault>
+			<wsdl:fault name="ChequeInexistente">
+				<soap:fault name="ChequeInexistente" use="literal" />
+			</wsdl:fault>
+			<wsdl:fault name="ChequeNaoEndossavel">
+				<soap:fault name="ChequeNaoEndossavel" use="literal" />
+			</wsdl:fault>
+			<wsdl:fault name="ChequeJaUsado">
+				<soap:fault name="ChequeJaUsado" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="listar">
+			<soap:operation soapAction="" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="UtilizadorInexistente">
+				<soap:fault name="UtilizadorInexistente" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+
+	<!-- ChequeRefeicao é um Web Service que gere contas de utilizadores que 
+		emitem cheques e que podem endossar os cheques a outros utilizadores. Os 
+		cheques podem ser usados como pagamento em restaurantes aderentes ao sistema. -->
+	<wsdl:service name="ChequeRefeicaoService">
+		<!-- O URL abaixo é o endereço por omissão do Web Service. No entanto o 
+			serviço pode e deve ser oferecido noutro endereço, que deve ser descoberto 
+			dinamicamente através do UDDI. -->
+		<wsdl:port name="ChequeRefeicaoPort" binding="tns:ChequeRefeicaoServiceSoapBinding">
+			<soap:address location="http://localhost:8080/chequerefeicao-ws/endpoint" />
+		</wsdl:port>
+	</wsdl:service>
+
+</wsdl:definitions>

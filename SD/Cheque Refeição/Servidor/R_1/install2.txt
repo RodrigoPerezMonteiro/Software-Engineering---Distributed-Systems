@@ -1,0 +1,70 @@
+Projecto de Sistemas Distribuídos
+
+Segunda entrega - 2014-05-14 - 20h
+
+Grupo de SD 017
+
+Repositório A-04-017-031
+
+Tiago Sampaio 72648 tiago.sampaio@ist.utl.pt
+Francisco Peixeiro 72745 francisco_peixeiro_10@hotmail.com
+Paulo Martins 72976 paulojsm504@gmail.com
+
+-------------------------------------------------------------------------------
+
+Serviço ChequeRefeicao
+
+Instruções de instalação para Windows
+
+[1] Iniciar servidores
+
+MySQL:
+> ant db-clean
+> ant db-build
+> ant db-populate 
+
+JUDDI:
+> startup
+
+
+[2] Criar directoria de trabalho
+
+cd temp
+mkdir SD
+cd SD
+
+
+[3] Obter versão entregue
+
+Servidor -> svn co svn+ssh://ist172648@sigma.ist.utl.pt/afs/ist.utl.pt/groups/leic-es/svn/A_04_17_31/chequerefeicao-ws/tags/R_2
+Cliente -> svn co svn+ssh://ist172648@sigma.ist.utl.pt/afs/ist.utl.pt/groups/leic-es/svn/A_04_17_31/chequerefeicao-ws-cli/tags/R_2
+
+
+
+[4] Preparar dados de teste
+
+Testes no cliente (Como só implementámos o protocolo base os testes só se baseiam no emitir e sacar)
+
+[5] Construir e executar servidor
+
+cd chequerefeicao-ws
+ant clean run
+
+
+[6] Construir cliente
+
+cd chequerefeicao-ws-cli
+ant clean build
+
+
+-------------------------------------------------------------------------------
+
+Instruções de teste:
+(Como verificar que todas as funcionalidades estão a funcionar correctamente)
+
+
+[1] Executar cliente de teste
+
+ant run
+-------------------------------------------------------------------------------
+FIM

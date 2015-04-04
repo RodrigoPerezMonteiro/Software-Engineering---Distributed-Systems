@@ -1,0 +1,42 @@
+Projecto de Engenharia de Software
+
+Terceira entrega - 2014-04-11 - 20h
+
+Grupo de ES 04
+
+Repositório A-04-017-031
+
+Nome: Fábio Antunes 
+Número: 66979 
+Email: fabio.antunes@ist.utl.pt
+Tempo de trabalho: 20 horas
+
+ 
+Nome: Tiago Sampaio
+Número: 72648 
+Email: tiago.sampaio@ist.utl.pt
+Tempo de trabalho: 15 horas
+
+
+Nome: Francisco Peixeiro
+Número: 72745 
+Email: francisco_peixeiro_10@hotmail.com
+Tempo de trabalho: 15 horas
+
+
+Nome: Miguel Deus
+Número: 72879 
+Email: miguel_deus10@hotmail.com
+Tempo de trabalho: 2 horas
+
+
+Nome: Paulo Martins
+Número: 72976 
+Email: paulojsm504@gmail.com
+Tempo de trabalho: 17 horas
+
+
+Nome: Rodrigo Monteiro
+Número: 73701 
+Email: rodrigo.ant.monteiro@gmail.com
+Tempo de trabalho: 15 horas
